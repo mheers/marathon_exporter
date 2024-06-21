@@ -8,9 +8,11 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/matt-deboer/go-marathon"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/common/log"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -49,7 +51,7 @@ func marathonConnect(uri *url.URL) error {
 		},
 	}
 
-	log.Debugln("Connecting to Marathon")
+	logrus.Debugf("Connecting to Marathon")
 	client, err := marathon.NewClient(config)
 	if err != nil {
 		return err
@@ -60,7 +62,7 @@ func marathonConnect(uri *url.URL) error {
 		return err
 	}
 
-	log.Debugf("Connected to Marathon! Name=%s, Version=%s\n", info.Name, info.Version)
+	logrus.Debugf("Connected to Marathon! Name=%s, Version=%s\n", info.Name, info.Version)
 	return nil
 }
 
@@ -68,7 +70,7 @@ func main() {
 	flag.Parse()
 	uri, err := url.Parse(*marathonUri)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	retryTimeout := time.Duration(10 * time.Second)
@@ -78,15 +80,15 @@ func main() {
 			break
 		}
 
-		log.Debugf("Problem connecting to Marathon: %v", err)
-		log.Infof("Couldn't connect to Marathon! Trying again in %v", retryTimeout)
+		logrus.Debugf("Problem connecting to Marathon: %v", err)
+		logrus.Infof("Couldn't connect to Marathon! Trying again in %v", retryTimeout)
 		time.Sleep(retryTimeout)
 	}
 
 	exporter := NewExporter(&scraper{uri}, defaultNamespace)
 	prometheus.MustRegister(exporter)
 
-	http.Handle(*metricsPath, prometheus.Handler())
+	http.Handle(*metricsPath, promhttp.Handler())
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<html>
              <head><title>Marathon Exporter</title></head>
@@ -97,6 +99,6 @@ func main() {
              </html>`))
 	})
 
-	log.Info("Starting Server: ", *listenAddress)
-	log.Fatal(http.ListenAndServe(*listenAddress, nil))
+	logrus.Info("Starting Server: ", *listenAddress)
+	logrus.Fatal(http.ListenAndServe(*listenAddress, nil))
 }

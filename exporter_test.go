@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -34,7 +35,7 @@ func newTestExporter(namespace string) *testExporter {
 	exporter := NewExporter(&testScraper{`{}`}, namespace)
 
 	prometheus.MustRegister(exporter)
-	server := httptest.NewServer(prometheus.UninstrumentedHandler())
+	server := httptest.NewServer(promhttp.Handler())
 	return &testExporter{
 		exporter: exporter,
 		server:   server,
@@ -55,7 +56,7 @@ func (te *testExporter) export(json string) ([]byte, error) {
 	}
 
 	defer response.Body.Close()
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func export(json string) ([]byte, error) {
 	prometheus.MustRegister(exporter)
 	defer prometheus.Unregister(exporter)
 
-	server := httptest.NewServer(prometheus.UninstrumentedHandler())
+	server := httptest.NewServer(promhttp.Handler())
 	defer server.Close()
 
 	response, err := http.Get(server.URL)
@@ -85,7 +86,7 @@ func export(json string) ([]byte, error) {
 	}
 
 	defer response.Body.Close()
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
