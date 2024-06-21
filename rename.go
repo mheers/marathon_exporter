@@ -23,6 +23,7 @@ func renameMetric(originalName string) (name string) {
 	name = strings.Replace(name, "$", "_", -1)
 	name = strings.Replace(name, "(", "_", -1)
 	name = strings.Replace(name, ")", "_", -1)
+	name = strings.Replace(name, "'", "_", -1)
 	name = strings.TrimRight(name, "_")
 	return
 }

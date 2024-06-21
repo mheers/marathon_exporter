@@ -188,16 +188,16 @@ func (e *Exporter) scrapeMetrics(json *gabs.Container, ch chan<- prometheus.Metr
 		case "message":
 			logrus.Errorf("Problem collecting metrics: %s\n", element.Data().(string))
 			return
-		case "version":
-			data := element.Data()
-			version, ok := data.(string)
-			if !ok {
-				logrus.Errorf(fmt.Sprintf("Bad conversion! Unexpected value \"%v\" for version\n", data))
-			} else {
-				gauge, _ := e.Gauges.Fetch("metrics_version", "Marathon metrics version", "version")
-				gauge.WithLabelValues(version).Set(1)
-				gauge.Collect(ch)
-			}
+		// case "version":
+		// 	data := element.Data()
+		// 	version, ok := data.(string)
+		// 	if !ok {
+		// 		logrus.Errorf(fmt.Sprintf("Bad conversion! Unexpected value \"%v\" for version\n", data))
+		// 	} else {
+		// 		gauge, _ := e.Gauges.Fetch("metrics_version", "Marathon metrics version", "version")
+		// 		gauge.WithLabelValues(version).Write(&io_prometheus_client.Metric{Gauge: &io_prometheus_client.Gauge{Value: ptr.Float64(1)}})
+		// 		gauge.Collect(ch)
+		// 	}
 
 		case "counters":
 			e.scrapeCounters(element)
@@ -338,8 +338,8 @@ func (e *Exporter) scrapeHistogram(key string, json *gabs.Container) (bool, erro
 	help := fmt.Sprintf(histogramHelp, key)
 	counter, new := e.Counters.Fetch(name+"_count", help)
 	counter.WithLabelValues().Write(&io_prometheus_client.Metric{
-		Gauge: &io_prometheus_client.Gauge{
-			Value: &count,
+		Histogram: &io_prometheus_client.Histogram{
+			SampleCountFloat: &count,
 		},
 	})
 

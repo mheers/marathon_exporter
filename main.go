@@ -68,6 +68,9 @@ func marathonConnect(uri *url.URL) error {
 
 func main() {
 	flag.Parse()
+
+	logrus.SetLevel(logrus.DebugLevel)
+
 	uri, err := url.Parse(*marathonUri)
 	if err != nil {
 		logrus.Fatal(err)
