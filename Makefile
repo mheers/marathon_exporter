@@ -14,12 +14,12 @@ build: clean
 		-o bin/$(TARGET) .
 
 release: build
-	docker build -t gettyimages/$(TARGET):$(VERSION) .
+	docker build -t mheers/$(TARGET):$(VERSION) .
 
 publish: release
-	docker push gettyimages/$(TARGET):$(VERSION)
-	docker tag gettyimages/$(TARGET):$(VERSION) gettyimages/$(TARGET):latest
-	docker push gettyimages/$(TARGET):latest
+	docker push mheers/$(TARGET):$(VERSION)
+	docker tag mheers/$(TARGET):$(VERSION) mheers/$(TARGET):latest
+	docker push mheers/$(TARGET):latest
 
 clean:
 	rm -rf bin/

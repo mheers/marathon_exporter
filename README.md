@@ -1,7 +1,7 @@
 # Marathon Prometheus Exporter
  
 
-[![Build Status](https://travis-ci.org/criteo/marathon_exporter.svg?branch=master)](https://travis-ci.org/criteo/marathon_exporter)
+[![Build Status](https://travis-ci.org/mheers/marathon_exporter.svg?branch=master)](https://travis-ci.org/mheers/marathon_exporter)
 [![Docker Pulls](https://img.shields.io/docker/pulls/gettyimages/marathon_exporter.svg)](https://hub.docker.com/r/gettyimages/marathon_exporter/)
 
 A [Prometheus](http://prometheus.io) metrics exporter for the [Marathon](https://mesosphere.github.io/marathon) Mesos framework.
@@ -13,13 +13,13 @@ Note: version v1.5.1+ of this exporter is not compatible with marathon 1.4.0 and
 ## Getting
 
 ```sh
-$ go get github.com/criteo/marathon_exporter
+$ go get github.com/mheers/marathon_exporter
 ```
 
 *\-or-*
 
 ```sh
-$ docker pull gettyimages/marathon_exporter
+$ docker pull mheers/marathon_exporter
 ```
 
 *\-or-* locally build image:
@@ -40,8 +40,4 @@ Usage of marathon_exporter:
         Address to listen on for web interface and telemetry. (default ":9088")
   -web.telemetry-path string
         Path under which to expose metrics. (default "/metrics")
-  -log.format value
-        If set use a syslog logger or JSON logging. Example: logger:syslog?appname=bob&local=7 or logger:stdout?json=true. Defaults to stderr.
-  -log.level value
-        Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal]. (default info)
 ```
